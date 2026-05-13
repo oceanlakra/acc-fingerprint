@@ -10,20 +10,50 @@ import {
   CartesianGrid,
 } from "recharts";
 
+interface Sample {
+  x: number;
+  y: number;
+  z: number;
+  t: number;
+}
+
+interface FingerprintFeatures {
+  xMean: number;
+  yMean: number;
+  zMean: number;
+  xVar: number;
+  yVar: number;
+  zVar: number;
+  magMean: number;
+}
+
+interface Fingerprint {
+  id: string;
+  features: FingerprintFeatures;
+}
+
+interface MatchResult {
+  type: "known" | "new";
+  match?: {
+    device: Fingerprint;
+    distance: number;
+  };
+}
+
 export default function AccelerometerFingerprintDemo() {
   
 
   const [supported, setSupported] = useState(true);
   const [collecting, setCollecting] = useState(false);
-  const [samples, setSamples] = useState([]);
-  const [fingerprint, setFingerprint] = useState(null);
-  const [knownDevices, setKnownDevices] = useState([]);
-  const [matchResult, setMatchResult] = useState(null);
+  const [samples, setSamples] = useState<Sample[]>([]);
+  const [fingerprint, setFingerprint] = useState<Fingerprint | null>(null);
+  const [knownDevices, setKnownDevices] = useState<Fingerprint[]>([]);
+  const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
   const [status, setStatus] = useState("Idle");
-  const [confidence, setConfidence] = useState(null);
-  const [entropyEstimate, setEntropyEstimate] = useState(null);
+  const [confidence, setConfidence] = useState<number | null>(null);
+  const [entropyEstimate, setEntropyEstimate] = useState<number | null>(null);
 
-  const motionRef = useRef([]);
+  const motionRef = useRef<Sample[]>([]);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("known_accel_devices") || "[]");
